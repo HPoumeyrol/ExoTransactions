@@ -8,7 +8,17 @@ public class Product extends Tables {
 	private Long pk_id;
 	private Double price;
 	private Integer qty;
+	private String label;
 	
+	
+
+	public Long getPk_id() {
+		return pk_id;
+	}
+	
+	public void setPk_id(Long pk_id) {
+		this.pk_id = pk_id;
+	}
 	
 	public Double getPrice() {
 		return price;
@@ -27,14 +37,15 @@ public class Product extends Tables {
 		this.qty = qty;
 		update();
 	}
-
-	public Long getPk_id() {
-		return pk_id;
-	}
 	
-	public void setPk_id(Long pk_id) {
-		this.pk_id = pk_id;
+	public String getLabel() {
+		return label;
 	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
 	
 	
 	
@@ -51,13 +62,15 @@ public class Product extends Tables {
 	}
 	
 	
-	private Product(Double price, Integer qty) {
+	private Product(String label, Double price, Integer qty) {
+		this.label= label;
 		this.price= price;
 		this.qty= qty;
 	}
 	
-	private Product(Long pk_id, Double price, Integer qty) {
+	private Product(Long pk_id, String label, Double price, Integer qty) {
 		this.pk_id= pk_id;
+		this.label= label;
 		this.price= price;
 		this.qty= qty;
 	}
@@ -73,8 +86,8 @@ public class Product extends Tables {
 		return  product;
 	}
 	
-	public static Product create(Double price, Integer qty) {
-		Product product= new Product(price, qty);
+	public static Product create(String label,Double price, Integer qty) {
+		Product product= new Product(label, price, qty);
 		product.insert();
 		return  product;
 	}
@@ -107,13 +120,14 @@ public class Product extends Tables {
 	}
 	
 	private void insert() {
-		String sqlCmd = "INSERT INTO product (price, qty) VALUES(?, ?);";
+		String sqlCmd = "INSERT INTO product (label, price, qty) VALUES(?, ?);";
 		
 		try (PreparedStatement preparedStatement = DbConnection.getDbConn().prepareStatement(sqlCmd, Statement.RETURN_GENERATED_KEYS)) {
 
 			try {
-				preparedStatement.setDouble(1, this.price);
-				preparedStatement.setInt(2, this.qty);
+				preparedStatement.setString(1, this.label);
+				preparedStatement.setDouble(2, this.price);
+				preparedStatement.setInt(3, this.qty);
 				//System.out.println("sqlCmd= " + preparedStatement);
 				preparedStatement.execute();
 				long key = -1L;
@@ -140,14 +154,15 @@ public class Product extends Tables {
 	
 	private void update() {
 
-		String sqlCmd = "update product set price = ?, qty = ? where pk_id = ?;";
+		String sqlCmd = "update product set label = ?, price = ?, qty = ? where pk_id = ?;";
 
 		try (PreparedStatement preparedStatement = DbConnection.getDbConn().prepareStatement(sqlCmd)) {
 
 			try {
-				preparedStatement.setDouble(1, this.price);
-				preparedStatement.setInt(2, this.qty);
-				preparedStatement.setLong(3, this.pk_id);
+				preparedStatement.setString(1, this.label);
+				preparedStatement.setDouble(2, this.price);
+				preparedStatement.setInt(3, this.qty);
+				preparedStatement.setLong(4, this.pk_id);
 				System.out.println("sqlCmd= " + preparedStatement);
 				preparedStatement.execute();
 				System.out.println("Mise a jour en base OK de " + this);
@@ -167,7 +182,7 @@ public class Product extends Tables {
 	
 	private void readFromDB() {
 
-		String sqlCmd = "select price, qty from product where pk_id = ?;";
+		String sqlCmd = "select label, price, qty from product where pk_id = ?;";
 
 		try (PreparedStatement preparedStatement = DbConnection.getDbConn().prepareStatement(sqlCmd)) {
 
@@ -176,6 +191,7 @@ public class Product extends Tables {
 				//System.out.println("sqlCmd= " + preparedStatement);
 				ResultSet rs = preparedStatement.executeQuery();
 				if (rs.next()) {
+					this.label= rs.getString("label");
 					this.price = rs.getDouble("price");
 					this.qty= rs.getInt("qty");
 					System.out.println("Lecture OK de " + this);
