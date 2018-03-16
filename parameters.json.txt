@@ -1,0 +1,8 @@
+{ 
+	"Environment" : "DEV",
+	"dbUrl" : "jdbc:postgresql://horton.elephantsql.com:5432/jssfpwiw", 
+        "dbUser" : "jssfpwiw",
+	"dbPwd" : "Ed4N40a7wHEmgDqxz6nlzkEjVQfFByMh",
+	"dbSchema" : "dbcaai"
+
+}
