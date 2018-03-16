@@ -179,7 +179,9 @@ public class Cash extends Tables {
 		}
 	}
 	
-	
+	public void displayAccountBalance() {
+		System.out.format("Le solde de cash est %2$10.2f\n", this.amount);
+	}
 	
 	
 }

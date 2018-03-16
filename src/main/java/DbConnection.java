@@ -6,9 +6,11 @@ import java.sql.SQLException;
 public class DbConnection implements Serializable
 {   
 	
-	private static final long serialVersionUID = 1426784925973463317L;
-	private static Connection dbConn= null;
-	private static Boolean IsDbConnected= false;
+	private static final long serialVersionUID = 1426783525973463317L;
+	/** Instance unique pré-initialisée */
+    private static DbConnection INSTANCE = new DbConnection();
+    private Connection dbConn= null;
+	private Boolean IsDbConnected= false;
 	
 	
 
@@ -23,11 +25,11 @@ public class DbConnection implements Serializable
 		}
     	// Open DataBase
 		try {
-			DbConnection.dbConn = DriverManager.getConnection(Params.getDbUrl(), Params.getDbUser(), Params.getDbPwd());
-			dbConn.setSchema(Params.getDbSchema());
+			this.dbConn = DriverManager.getConnection(Params.getDbUrl(), Params.getDbUser(), Params.getDbPwd());
+			this.dbConn.setSchema(Params.getDbSchema());
 			System.out.println("Catalog= " + dbConn.getCatalog());
 			System.out.println("Schema= " + dbConn.getSchema());
-			DbConnection.IsDbConnected= true;
+			this.IsDbConnected= true;
 		} catch (SQLException e) {
 			System.out.println("DataBase Connexion error : ");
 			e.printStackTrace();
@@ -36,8 +38,6 @@ public class DbConnection implements Serializable
 		}
     }
  
-    /** Instance unique pré-initialisée */
-    private static DbConnection INSTANCE = new DbConnection();
      
     /** Point d'accès pour l'instance unique du singleton */
     public static DbConnection getInstance()
@@ -50,27 +50,26 @@ public class DbConnection implements Serializable
     }
 
     public static Connection getDbConn() {
-		return dbConn;
+		return INSTANCE.dbConn;
     }
     
-//    public static boolean initConnection() {
-//    	boolean result= false;
-//    	
-//    	
-//    	// Open DataBase
-//		try {
-//			DbConnection.dbConn = DriverManager.getConnection(Params.getDbUrl(), Params.getDbUser(), Params.getDbPwd());
-//			result = true;
-//		} catch (SQLException e) {
-//			System.out.println("DataBase Connexion error");
-//			e.printStackTrace();
-//		}
-//    	return result;
-//    }
 
 	public static Boolean isDbConnected() {
-		return IsDbConnected;
+		return INSTANCE.IsDbConnected;
 	}
 
+	public static void setAutoCommit(Boolean autoCommit) throws SQLException {
+		if(INSTANCE.IsDbConnected) INSTANCE.dbConn.setAutoCommit(autoCommit);
+	}
+
+	public static void commit() throws SQLException {
+		if(INSTANCE.IsDbConnected) INSTANCE.dbConn.commit();
+		
+		INSTANCE.dbConn.rollback();
+	}
+	
+	public static void rollback() throws SQLException {
+		if(INSTANCE.IsDbConnected) INSTANCE.dbConn.rollback();
+	}
 	
 }

@@ -233,4 +233,8 @@ public class Customer extends Tables {
 		return  result;
 	}
 	
+	
+	public void displayAccountBalance() {
+		System.out.format("Le solde du compte de %1$s est %2$10.2f\n", this.name, this.credit);
+	}
 }

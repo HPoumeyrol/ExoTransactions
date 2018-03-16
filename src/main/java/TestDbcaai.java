@@ -1,10 +1,11 @@
+import java.sql.SQLException;
 import java.util.Random;
 
 public class TestDbcaai {
 
 	public static void main(String args[]) {
 		
-		Params.display();
+		Params.getInstance().display();
 		
 		
 		
@@ -40,7 +41,12 @@ public class TestDbcaai {
 				Integer qtyProductToBuy = rng.nextInt(10)+1;
 				
 				System.out.format("Run %1$2d : Achat de %2$5.2f crédits, Ajout de %3$3d produits, Achat de %4$3d produits", run, creditCustomerToAdd, qtyProductToAdd, qtyProductToBuy);
-				BusinessRules.addCreditToCustomer(customer1, cash1, creditCustomerToAdd);
+				try {
+					BusinessRules.addCreditToCustomer(customer1, cash1, creditCustomerToAdd);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				BusinessRules.supplyProductStock(product1, qtyProductToAdd);
 				BusinessRules.buyProduct(customer1, product1, qtyProductToBuy);
 				System.out.format("-------------- end run %1$2d ---------------\n", run);

@@ -7,19 +7,17 @@ import org.json.simple.parser.ParseException;
 
 public class Params implements Serializable
 {   
-	//private final static String parametersJsonFilePath = "C:\\Users\\Utilisateur.UTILISA-1R91N3M\\Documents\\JavaPrograms\\DB_ConcucurenstAccessAndIntegrity\\parameters.json.txt";
-	private final static String parametersJsonFilePath = ".\\parameters.json.txt";
-	/** Instance unique pré-initialisée */
-    private static Params INSTANCE = null;
-     
-    
-	private static String env= "";
-	private static String dbUrl= "";
-	private static String dbUser= "";
-	private static String dbPwd= "";
-	private static String dbSchema= "";
-	
 	private static final long serialVersionUID = 1426784925973463317L;
+	private static Params INSTANCE = null; /** Instance unique pré-initialisée */
+    private final static String PARAMETERS_JSON_FILE_PATH = ".\\parameters.json.txt";
+	
+    
+	private String env= "";
+	private String dbUrl= "";
+	private String dbUser= "";
+	private String dbPwd= "";
+	private String dbSchema= "";
+	
 	
 	/** Constructeur privé */
     private Params(){
@@ -27,7 +25,7 @@ public class Params implements Serializable
     	JSONParser parser = new JSONParser();
         JSONObject data=null;
 		try {
-			data = (JSONObject) parser.parse(new FileReader(parametersJsonFilePath));
+			data = (JSONObject) parser.parse(new FileReader(PARAMETERS_JSON_FILE_PATH));
 			env= (String) data.get("Environment");
 			dbUrl= (String) data.get("dbUrl");	
 	    	dbUser= (String) data.get("dbUser");	
@@ -35,7 +33,7 @@ public class Params implements Serializable
     		dbSchema= (String) data.get("dbSchema");	
 	
 		} catch (IOException | ParseException e) {
-			System.out.println("Error when parsing parameters file " + parametersJsonFilePath);
+			System.out.println("Error when parsing parameters file " + PARAMETERS_JSON_FILE_PATH);
 			e.printStackTrace();
 			System.out.println("Program terminated on error.");
 			System.exit(99);
@@ -53,24 +51,26 @@ public class Params implements Serializable
         return INSTANCE;
     }
 
+        
 	public static String getDbUrl() {
-		return dbUrl;
+		return INSTANCE.dbUrl;
 	}
 
+	
 	public static String getDbUser() {
-		return dbUser;
+		return INSTANCE.dbUser;
 	}
 
 	public static String getDbPwd() {
-		return dbPwd;
+		return INSTANCE.dbPwd;
 	}
 
 	public static String getEnv() {
-		return env;
+		return INSTANCE.env;
 	}
 
 	public static String getDbSchema() {
-		return dbSchema;
+		return INSTANCE.dbSchema;
 	}
 
 	@Override
@@ -78,8 +78,8 @@ public class Params implements Serializable
 		return "Params :\n\tEnv= " + env + "\n\tdbUrl= "+ dbUrl + "\n\tdbUser= " + dbUser + "\n\tdbPwd= " + dbPwd + "\n\tdbSchema= " + dbSchema;
 	}
 
-	public static void display() {
-		System.out.println(Params.getInstance().toString());
+	public void display() {
+		System.out.println(this.toString());
 	}
     
     

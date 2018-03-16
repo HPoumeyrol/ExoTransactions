@@ -1,11 +1,31 @@
+import java.sql.SQLException;
 
 public class BusinessRules {
 	
-	static public void addCreditToCustomer(Customer customer, Cash cash, Double amountCreditoAdd) {
+	static public void addCreditToCustomer(Customer customer, Cash cash, Double amountCreditoAdd) throws SQLException {
+		
 		
 		System.out.format("\n\tAchat de %1$5.2f crédits pour %2$s\n",amountCreditoAdd, customer.getName());
-		customer.setCredit(customer.getCredit() + amountCreditoAdd);
-		cash.setAmount(cash.getAmount() + amountCreditoAdd);
+		try {
+			DbConnection.setAutoCommit(false);
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try {
+			customer.setCredit(customer.getCredit() + amountCreditoAdd);
+			cash.setAmount(cash.getAmount() + amountCreditoAdd);
+			DbConnection.commit();
+		} catch(SQLException e) {
+			e.printStackTrace();
+			try {
+				DbConnection.rollback();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+		DbConnection.setAutoCommit(false);
 		customer.refresh();
 		cash.refresh();
 		System.out.format("\tle Nouveau solde de %1$s %2$5.2f crédits\n", customer.getName(), customer.getCredit());
