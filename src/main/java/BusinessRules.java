@@ -64,7 +64,7 @@ public class BusinessRules {
 			{
 				DbConnection.commit();
 				//register Sale
-				Sales_log sales_log= Sales_log.create(product.getPk_id(), qtyToBuy);
+				Sale_log sales_log= Sale_log.create(product.getPk_id(), qtyToBuy);
 				sales_log.display();
 				
 			} else {

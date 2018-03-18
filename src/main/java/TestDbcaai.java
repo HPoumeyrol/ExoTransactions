@@ -21,11 +21,14 @@ public class TestDbcaai {
 			Product.truncate(); Product product1 = Product.create("PC Lenovo", 15.0, 0);
 					
 			//Vider sales_log
-			Sales_log.truncate();
+			Sale_log.truncate();
 			
 			System.out.println("");
 			System.out.println("Start");
 			
+			
+			
+			// Test loop
 			Random rng = new Random();
 			for(int run=0; run != NB_RUNS_TO_DO; ++run) {
 				System.out.format("\n\n-------------- run %1$2d ---------------\n", run);
@@ -49,6 +52,21 @@ public class TestDbcaai {
 				
 			}
 			
+			System.out.println("");
+			
+			cash1.refresh();
+			customer1.refresh();
+			product1.refresh();
+			System.out.format("Current Database values :\n\t%1$s\n\t%2$s\n\t%3$s\n", cash1,customer1,product1);
+			Sale_log.printAllSalesLog();
+			Double salesTotal= Sale_log.getTotalSalesAmount();
+			System.out.format("Le total des ventes est de %1$.2f €\n", salesTotal);
+			if(cash1.getAmount() == customer1.getCredit() + salesTotal) {
+				System.out.println("La balance des ventes est OK");
+			} else {
+				System.out.println("La balance des ventes est erronée.");
+			}
+				
 		}
 
 	}
