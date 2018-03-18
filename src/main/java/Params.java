@@ -8,7 +8,7 @@ import org.json.simple.parser.ParseException;
 public class Params implements Serializable
 {   
 	private static final long serialVersionUID = 1426784925973463317L;
-	private static Params INSTANCE = null; /** Instance unique pré-initialisée */
+	private static Params INSTANCE = new Params(); /** Instance unique pré-initialisée */
     private final static String PARAMETERS_JSON_FILE_PATH = ".\\parameters.json.txt";
 	
     
@@ -78,8 +78,8 @@ public class Params implements Serializable
 		return "Params :\n\tEnv= " + env + "\n\tdbUrl= "+ dbUrl + "\n\tdbUser= " + dbUser + "\n\tdbPwd= " + dbPwd + "\n\tdbSchema= " + dbSchema;
 	}
 
-	public void display() {
-		System.out.println(this.toString());
+	public static void display() {
+		System.out.println(INSTANCE.toString());
 	}
     
     

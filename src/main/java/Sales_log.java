@@ -40,7 +40,8 @@ public class Sales_log extends Tables {
 	
 	@Override
 	public String toString() {
-		return "Sales_log [pk_id=" + pk_id + ", fk_produc_id=" + fk_produc_id + ", qty=" + qty + "]";
+		Product product= Product.findProductById(fk_produc_id);
+		return "Sales_log [pk_id=" + pk_id + ", fk_produc_id=" + fk_produc_id + "(" + product.getLabel() + "), qty=" + qty + "]";
 	}
 
 	private Sales_log() {
@@ -90,11 +91,11 @@ public class Sales_log extends Tables {
 
 			try {
 				preparedStatement.execute();
-				System.out.println("Truncate Table sales_Log OK");
+				//ystem.out.println("Truncate Table sales_Log OK");
 				
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				System.out.println("erreur lors de Truncate Table sales_Log");
+				System.err.println("erreur lors de Truncate Table sales_Log");
 				e.printStackTrace();
 			}
 
@@ -122,11 +123,11 @@ public class Sales_log extends Tables {
 					key = rs.getLong("pk_id");
 				}
 				this.pk_id = key;
-				System.out.println("Enregistrement en base OK : "  + key + " : " + this);
+				//System.out.println("Enregistrement en base OK : "  + key + " : " + this);
 				
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				System.out.println("erreur lors de l'enregistrement en base de " + this);
+				System.err.println("erreur lors de l'enregistrement en base de " + this);
 				e.printStackTrace();
 			}
 
@@ -150,10 +151,10 @@ public class Sales_log extends Tables {
 				preparedStatement.setLong(3, this.pk_id);
 				//System.out.println("sqlCmd= " + preparedStatement);
 				preparedStatement.execute();
-				System.out.println("Mise a jour en base OK de " + this);
+				//System.out.println("Mise a jour en base OK de " + this);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				System.out.println(this + " erreur lors de la mise a jour en base !");
+				System.err.println(this + " erreur lors de la mise a jour en base !");
 				e.printStackTrace();
 			}
 
@@ -178,12 +179,12 @@ public class Sales_log extends Tables {
 				if (rs.next()) {
 					this.fk_produc_id = rs.getLong("fk_produc_id");
 					this.qty= rs.getInt("pqty");
-					System.out.println("Lecture OK de " + this);
+					//System.out.println("Lecture OK de " + this);
 				}
 				
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				System.out.println(this + " erreur lors de la mise a jour en base !");
+				System.err.println(this + " erreur lors de la mise a jour en base !");
 				e.printStackTrace();
 			}
 

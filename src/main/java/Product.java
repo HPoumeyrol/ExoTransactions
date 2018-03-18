@@ -52,7 +52,7 @@ public class Product extends Tables {
 
 	@Override
 	public String toString() {
-		return "Product [pk_id=" + pk_id + ", price=" + price + ", qty=" + qty + "]";
+		return "Product [pk_id=" + pk_id + ", label=" + label + ", price=" + price + ", qty=" + qty + "]";
 	}
 
 	private Product() {
@@ -104,11 +104,11 @@ public class Product extends Tables {
 
 			try {
 				preparedStatement.execute();
-				System.out.println("Truncate Table product OK");
+				//System.out.println("Truncate Table product OK");
 				
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				System.out.println("erreur lors de Truncate Table product");
+				System.err.println("erreur lors de Truncate Table product");
 				e.printStackTrace();
 			}
 
@@ -120,7 +120,7 @@ public class Product extends Tables {
 	}
 	
 	private void insert() {
-		String sqlCmd = "INSERT INTO product (label, price, qty) VALUES(?, ?);";
+		String sqlCmd = "INSERT INTO product (label, price, qty) VALUES(?, ?, ?);";
 		
 		try (PreparedStatement preparedStatement = DbConnection.getDbConn().prepareStatement(sqlCmd, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -136,11 +136,11 @@ public class Product extends Tables {
 					key = rs.getLong("pk_id");
 				}
 				this.pk_id = key;
-				System.out.println("Enregistrement en base OK : "  + key + " : " + this);
+				//System.out.println("Enregistrement en base OK : "  + key + " : " + this);
 				
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				System.out.println("erreur lors de l'enregistrement en base de " + this);
+				System.err.println("erreur lors de l'enregistrement en base de " + this);
 				e.printStackTrace();
 			}
 
@@ -163,12 +163,12 @@ public class Product extends Tables {
 				preparedStatement.setDouble(2, this.price);
 				preparedStatement.setInt(3, this.qty);
 				preparedStatement.setLong(4, this.pk_id);
-				System.out.println("sqlCmd= " + preparedStatement);
+				//System.out.println("sqlCmd= " + preparedStatement);
 				preparedStatement.execute();
-				System.out.println("Mise a jour en base OK de " + this);
+				//System.out.println("Mise a jour en base OK de " + this);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				System.out.println(this + " erreur lors de la mise a jour en base !");
+				System.err.println(this + " erreur lors de la mise a jour en base !");
 				e.printStackTrace();
 			}
 
@@ -194,12 +194,12 @@ public class Product extends Tables {
 					this.label= rs.getString("label");
 					this.price = rs.getDouble("price");
 					this.qty= rs.getInt("qty");
-					System.out.println("Lecture OK de " + this);
+					//System.out.println("Lecture OK de " + this);
 				}
 				
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				System.out.println(this + " erreur lors de la mise a jour en base !");
+				System.err.println(this + " erreur lors de la mise a jour en base !");
 				e.printStackTrace();
 			}
 

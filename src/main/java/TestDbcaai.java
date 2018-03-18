@@ -1,52 +1,48 @@
-import java.sql.SQLException;
 import java.util.Random;
 
 public class TestDbcaai {
-
+	static final int NB_RUNS_TO_DO= 10;
+	
 	public static void main(String args[]) {
 		
-		Params.getInstance().display();
+		Params.display();
 		
 		
 		
 		if(DbConnection.isDbConnected()) {
 			
+			//Creer un cash
+			Cash.truncate(); Cash cash1 = Cash.create(0.0);
+			
 			//Creer un client;
-			Customer.truncate();
-			Customer customer1 = Customer.create("Hugues Poumeyrol",0.0);
-			customer1.refresh();
-			customer1.display();
+			Customer.truncate(); Customer customer1 = Customer.create("Hugues Poumeyrol",0.0);
 			
 			//Creer un produit
-			Product.truncate();
-			Product product1 = Product.create(15.0, 0);
-			product1.refresh();
-			product1.display();
-
-			//Creer un cash
-			Cash.truncate();
-			Cash cash1 = Cash.create(0.0);
-			cash1.refresh();
-			cash1.display();
+			Product.truncate(); Product product1 = Product.create("PC Lenovo", 15.0, 0);
+					
+			//Vider sales_log
+			Sales_log.truncate();
 			
 			System.out.println("");
 			System.out.println("Start");
 			
 			Random rng = new Random();
-			int nbRunToDo= 30;
-			for(int run=0; run != nbRunToDo; ++run) {
+			for(int run=0; run != NB_RUNS_TO_DO; ++run) {
 				System.out.format("\n\n-------------- run %1$2d ---------------\n", run);
+				cash1.refresh();
+				customer1.refresh();
+				product1.refresh();
+				System.out.format("Current Database values :\n\t%1$s\n\t%2$s\n\t%3$s\n", cash1,customer1,product1);
+				
+				// Create random values
 				Double creditCustomerToAdd=(rng.nextInt(100)+1)* 1.0;
 				Integer qtyProductToAdd = rng.nextInt(10)+1;
 				Integer qtyProductToBuy = rng.nextInt(10)+1;
 				
-				System.out.format("Run %1$2d : Achat de %2$5.2f crédits, Ajout de %3$3d produits, Achat de %4$3d produits", run, creditCustomerToAdd, qtyProductToAdd, qtyProductToBuy);
-				try {
-					BusinessRules.addCreditToCustomer(customer1, cash1, creditCustomerToAdd);
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				
+				System.out.format("\n\t TACHES A REALISER : Provision de %1$.2f crédits, Ajout au stock de %3$d %2$s, Achat de %4$d %2$s\n", creditCustomerToAdd, product1.getLabel(), qtyProductToAdd, qtyProductToBuy);
+				BusinessRules.addCreditToCustomer(customer1, cash1, creditCustomerToAdd);
+				
 				BusinessRules.supplyProductStock(product1, qtyProductToAdd);
 				BusinessRules.buyProduct(customer1, product1, qtyProductToBuy);
 				System.out.format("-------------- end run %1$2d ---------------\n", run);

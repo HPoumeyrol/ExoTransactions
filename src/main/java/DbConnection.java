@@ -31,9 +31,9 @@ public class DbConnection implements Serializable
 			System.out.println("Schema= " + dbConn.getSchema());
 			this.IsDbConnected= true;
 		} catch (SQLException e) {
-			System.out.println("DataBase Connexion error : ");
+			System.err.println("DataBase Connexion error : ");
 			e.printStackTrace();
-			System.out.println("Program terminated on error.");
+			System.err.println("Program terminated on error.");
 			System.exit(99);
 		}
     }
@@ -58,18 +58,69 @@ public class DbConnection implements Serializable
 		return INSTANCE.IsDbConnected;
 	}
 
-	public static void setAutoCommit(Boolean autoCommit) throws SQLException {
-		if(INSTANCE.IsDbConnected) INSTANCE.dbConn.setAutoCommit(autoCommit);
+	
+	
+	
+	public static boolean setAutoCommit(Boolean autoCommitDesiredValue) {
+		Boolean res= false;
+		if(INSTANCE.IsDbConnected) {
+			
+			try {
+				INSTANCE.dbConn.setAutoCommit(autoCommitDesiredValue);
+				//System.out.println("AutoCommit set to " + autoCommitDesiredValue);
+				res= true;
+			} catch (SQLException e )
+			{
+				System.err.println("Error when setting AutoCommit");
+				e.printStackTrace();
+			}
+		} else {
+			System.err.println("Error : database in not connected !");
+		}
+		return res;
 	}
 
-	public static void commit() throws SQLException {
-		if(INSTANCE.IsDbConnected) INSTANCE.dbConn.commit();
+	
+	
+	
+	
+	public static boolean commit(){
+		Boolean res= false;
+		if(INSTANCE.IsDbConnected) {
+			try {
+				INSTANCE.dbConn.commit();
+				System.out.println("Transaction commited OK");
+				res= true;
+			} catch (SQLException e )
+			{
+				System.err.println("Error when commiting transaction");
+				e.printStackTrace();
+			}
+			
+		} else {
+			System.err.println("Error : database in not connected !");
+		}
+		return res;
 		
-		INSTANCE.dbConn.rollback();
 	}
 	
-	public static void rollback() throws SQLException {
-		if(INSTANCE.IsDbConnected) INSTANCE.dbConn.rollback();
+	public static boolean rollback(){
+		Boolean res= false;
+		if(INSTANCE.IsDbConnected) {
+			try {
+				INSTANCE.dbConn.rollback();
+				System.out.println("Transaction rollbacked OK");
+				res= true;
+			} catch (SQLException e )
+			{
+				System.err.println("Error when rollbacking transaction");
+				e.printStackTrace();
+			}
+			
+		} else {
+			System.err.println("Error : database in not connected !");
+		}
+		return res;
 	}
 	
 }

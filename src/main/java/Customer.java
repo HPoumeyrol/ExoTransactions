@@ -98,11 +98,11 @@ public class Customer extends Tables {
 
 			try {
 				preparedStatement.execute();
-				System.out.println("Truncate Table customer OK");
+				//System.out.println("Truncate Table customer OK");
 				
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				System.out.println("erreur lors de Truncate Table customer");
+				System.err.println("erreur lors de Truncate Table customer");
 				e.printStackTrace();
 			}
 
@@ -131,11 +131,11 @@ public class Customer extends Tables {
 					key = rs.getLong("pk_id");
 				}
 				this.pk_id = key;
-				System.out.println("Enregistrement en base OK : "  + key + " : " + this);
+				//System.out.println("Enregistrement en base OK : "  + key + " : " + this);
 				
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				System.out.println("erreur lors de l'enregistrement en base de " + this);
+				System.err.println("erreur lors de l'enregistrement en base de " + this);
 				e.printStackTrace();
 			}
 
@@ -159,10 +159,10 @@ public class Customer extends Tables {
 				preparedStatement.setLong(3, this.pk_id);
 				//System.out.println("sqlCmd= " + preparedStatement);
 				preparedStatement.execute();
-				System.out.println("Mise a jour en base OK de " + this);
+				//System.out.println("Mise a jour en base OK de " + this);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				System.out.println(this + " erreur lors de la mise a jour en base !");
+				System.err.println(this + " erreur lors de la mise a jour en base !");
 				e.printStackTrace();
 			}
 
@@ -187,12 +187,12 @@ public class Customer extends Tables {
 				if (rs.next()) {
 					this.name = rs.getString("name");
 					this.credit = rs.getDouble("credit");
-					System.out.println("Lecture OK de " + this);
+					//System.out.println("Lecture OK de " + this);
 				}
 				
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				System.out.println(this + " erreur lors de la mise a jour en base !");
+				System.err.println(this + " erreur lors de la mise a jour en base !");
 				e.printStackTrace();
 			}
 
@@ -215,13 +215,12 @@ public class Customer extends Tables {
 				ResultSet rs = preparedStatement.executeQuery();
 				if (rs.next()) {
 					result= new Customer(rs.getLong("pk_id"), rs.getString("name"), rs.getDouble("credit"));
-					
-					System.out.println("Lecture OK de " + result);
+					//System.out.println("Lecture OK de " + result);
 				}
 				
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				System.out.println("Erreur lors de la recherche de " + name);
+				System.err.println("Erreur lors de la recherche de " + name);
 				e.printStackTrace();
 			}
 

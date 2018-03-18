@@ -78,11 +78,11 @@ public class Cash extends Tables {
 
 			try {
 				preparedStatement.execute();
-				System.out.println("Truncate Table cash OK");
+				//System.out.println("Truncate Table cash OK");
 				
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				System.out.println("erreur lors de Truncate Table cash");
+				System.err.println("erreur lors de Truncate Table cash");
 				e.printStackTrace();
 			}
 
@@ -110,11 +110,11 @@ public class Cash extends Tables {
 					key = rs.getLong("pk_id");
 				}
 				this.pk_id = key;
-				System.out.println("Enregistrement en base OK : "  + key + " : " + this);
+				//System.out.println("Enregistrement en base OK : "  + key + " : " + this);
 				
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				System.out.println("erreur lors de l'enregistrement en base de " + this);
+				System.err.println("erreur lors de l'enregistrement en base de " + this);
 				e.printStackTrace();
 			}
 
@@ -137,10 +137,10 @@ public class Cash extends Tables {
 				preparedStatement.setLong(2, this.pk_id);
 				//System.out.println("sqlCmd= " + preparedStatement);
 				preparedStatement.execute();
-				System.out.println("Mise a jour en base OK de " + this);
+				//System.out.println("Mise a jour en base OK de " + this);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				System.out.println(this + " erreur lors de la mise a jour en base !");
+				System.err.println(this + " erreur lors de la mise a jour en base !");
 				e.printStackTrace();
 			}
 
@@ -164,12 +164,12 @@ public class Cash extends Tables {
 				ResultSet rs = preparedStatement.executeQuery();
 				if (rs.next()) {
 					this.amount = rs.getDouble("amount");
-					System.out.println("Lecture OK de " + this);
+					//System.out.println("Lecture OK de " + this);
 				}
 				
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				System.out.println(this + " erreur lors de la mise a jour en base !");
+				System.err.println(this + " erreur lors de la mise a jour en base !");
 				e.printStackTrace();
 			}
 
