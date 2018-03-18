@@ -15,7 +15,7 @@ public class TestDbcaai {
 			Cash.truncate(); Cash cash1 = Cash.create(0.0);
 			
 			//Creer un client;
-			Customer.truncate(); Customer customer1 = Customer.create("Hugues Poumeyrol",0.0);
+			Customer.truncate(); Customer customer1 = Customer.create("Pierre DURAND",0.0);
 			
 			//Creer un produit
 			Product.truncate(); Product product1 = Product.create("PC Lenovo", 15.0, 0);
