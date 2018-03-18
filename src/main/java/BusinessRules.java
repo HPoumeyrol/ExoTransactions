@@ -48,25 +48,29 @@ public class BusinessRules {
 		
 		if (DbConnection.setAutoCommit(false)) //  if setting autocomit to false succed
 		{
-			
+			boolean transactionIsOk= true;
 			
 			//Update product Stock
 			System.out.format("\tSortie de %1$d %2$s du stock.\n", qtyToBuy, product.getLabel());
-			product.setQty(product.getQty() - qtyToBuy);
+			if(! product.setQty(product.getQty() - qtyToBuy)) { transactionIsOk= false; }
+			product.refresh(); System.out.format("\tNouvel etat du stock = %1$d %2$s\n", product.getQty(), product.getLabel());
 			
 			//update customer Credit
 			System.out.format("\tDébit de %1$.2f € sur le compte de %2$s\n",saleTotal, customer.getName());
-			customer.setCredit(customer.getCredit() - saleTotal);
-			
-			//register Sale
-			Sales_log sales_log= Sales_log.create(product.getPk_id(), qtyToBuy);
-			sales_log.display();
+			if(! customer.setCredit(customer.getCredit() - saleTotal)) { transactionIsOk= false; }
+			customer.refresh();	System.out.format("\tLe nouveau solde du compte de %1$s est %2$.2f €\n", customer.getName(), customer.getCredit());
 						
-			if (! DbConnection.commit()) //test if commit is OK
+			if(transactionIsOk)
 			{
-				DbConnection.rollback(); // if not then rollback
+				DbConnection.commit();
+				//register Sale
+				Sales_log sales_log= Sales_log.create(product.getPk_id(), qtyToBuy);
+				sales_log.display();
+				
+			} else {
+				System.err.println("Des erreurs ont été détectés pendnat la transaction, transaction annulée !");
+				DbConnection.rollback(); 
 			}
-			
 		}
 		else
 		{

@@ -22,9 +22,9 @@ public class Customer extends Tables {
 		return name;
 	}
 	
-	public void setName(String name) {
+	public boolean setName(String name) {
 		this.name = name;
-		update();
+		return update();
 	}
 	
 	public Double getCredit() {
@@ -32,9 +32,9 @@ public class Customer extends Tables {
 		
 	}
 	
-	public void setCredit(Double credit) {
+	public boolean setCredit(Double credit) {
 		this.credit = credit;
-		update();
+		return update();
 	}
 
 	@Override
@@ -115,7 +115,8 @@ public class Customer extends Tables {
 	
 	
 	
-	private void insert() {
+	private boolean insert() {
+		boolean res= false;
 		String sqlCmd = "INSERT INTO customer (name, credit) VALUES(?, ?);";
 		
 		try (PreparedStatement preparedStatement = DbConnection.getDbConn().prepareStatement(sqlCmd, Statement.RETURN_GENERATED_KEYS)) {
@@ -132,6 +133,7 @@ public class Customer extends Tables {
 				}
 				this.pk_id = key;
 				//System.out.println("Enregistrement en base OK : "  + key + " : " + this);
+				res= true;
 				
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -143,12 +145,12 @@ public class Customer extends Tables {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		return res;
 	}
 	
 	
-	private void update() {
-
+	private boolean update() {
+		boolean res= false;
 		String sqlCmd = "update customer set name = ?, credit = ? where pk_id = ?;";
 
 		try (PreparedStatement preparedStatement = DbConnection.getDbConn().prepareStatement(sqlCmd)) {
@@ -160,6 +162,7 @@ public class Customer extends Tables {
 				//System.out.println("sqlCmd= " + preparedStatement);
 				preparedStatement.execute();
 				//System.out.println("Mise a jour en base OK de " + this);
+				res= true;
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				System.err.println(this + " erreur lors de la mise a jour en base !");
@@ -170,6 +173,7 @@ public class Customer extends Tables {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return res;
 	}
 	
 	

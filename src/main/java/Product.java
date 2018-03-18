@@ -24,26 +24,27 @@ public class Product extends Tables {
 		return price;
 	}
 
-	public void setPrice(Double price) {
+	public boolean setPrice(Double price) {
 		this.price = price;
-		update();
+		return update();
 	}
 
 	public Integer getQty() {
 		return qty;
 	}
 
-	public void setQty(Integer qty) {
+	public boolean setQty(Integer qty) {
 		this.qty = qty;
-		update();
+		return update();
 	}
 	
 	public String getLabel() {
 		return label;
 	}
 
-	public void setLabel(String label) {
+	public boolean setLabel(String label) {
 		this.label = label;
+		return update();
 	}
 
 	
@@ -119,7 +120,8 @@ public class Product extends Tables {
 
 	}
 	
-	private void insert() {
+	private boolean insert() {
+		boolean res= false;
 		String sqlCmd = "INSERT INTO product (label, price, qty) VALUES(?, ?, ?);";
 		
 		try (PreparedStatement preparedStatement = DbConnection.getDbConn().prepareStatement(sqlCmd, Statement.RETURN_GENERATED_KEYS)) {
@@ -137,6 +139,7 @@ public class Product extends Tables {
 				}
 				this.pk_id = key;
 				//System.out.println("Enregistrement en base OK : "  + key + " : " + this);
+				res = true;
 				
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -148,12 +151,12 @@ public class Product extends Tables {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		return res;
 	}
 	
 	
-	private void update() {
-
+	private boolean update() {
+		boolean res= false;
 		String sqlCmd = "update product set label = ?, price = ?, qty = ? where pk_id = ?;";
 
 		try (PreparedStatement preparedStatement = DbConnection.getDbConn().prepareStatement(sqlCmd)) {
@@ -166,6 +169,7 @@ public class Product extends Tables {
 				//System.out.println("sqlCmd= " + preparedStatement);
 				preparedStatement.execute();
 				//System.out.println("Mise a jour en base OK de " + this);
+				res= true;
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				System.err.println(this + " erreur lors de la mise a jour en base !");
@@ -176,6 +180,7 @@ public class Product extends Tables {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return res;
 	}
 	
 	
