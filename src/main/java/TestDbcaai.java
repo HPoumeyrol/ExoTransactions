@@ -16,8 +16,7 @@ public class TestDbcaai {
 		
 		
 		Params.display();
-		
-		
+				
 		
 		if(DbConnection.isDbConnected()) {
 			
