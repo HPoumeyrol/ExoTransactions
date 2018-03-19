@@ -92,7 +92,7 @@ public class Customer extends Tables {
 	
 	
 	public static void truncate() {
-		String sqlCmd = "TRUNCATE customer;";
+		String sqlCmd = "TRUNCATE customer CASCADE;";
 		
 		try (PreparedStatement preparedStatement = DbConnection.getDbConn().prepareStatement(sqlCmd)) {
 

@@ -39,8 +39,8 @@ public class BusinessRules {
 		System.out.println("");
 	}
 
-	
-	static public void buyProduct(Customer customer, Product product, Integer qtyToBuy) {
+
+	static public void buyProduct(Vendor vendor, Customer customer, Product product, Integer qtyToBuy) {
 		System.out.format("\n\tTACHE 3 : %1$s achète %2$d %3$s\n",customer.getName(), qtyToBuy, product.getLabel());
 		Double saleTotal= product.getPrice() * qtyToBuy; // Compute saleTotal = Product price * qtyToBuy
 		System.out.format("\tAchat : %1$d %2$s à %3$.2f € = %4$.2f €\n",qtyToBuy, product.getLabel(), product.getPrice(), saleTotal);
@@ -64,7 +64,7 @@ public class BusinessRules {
 			{
 				DbConnection.commit();
 				//register Sale
-				Sale_log sales_log= Sale_log.create(product.getPk_id(), qtyToBuy);
+				Sale_log sales_log= Sale_log.create(product.getPk_id(), vendor.getPk_id(), qtyToBuy);
 				sales_log.display();
 				
 			} else {
@@ -81,7 +81,7 @@ public class BusinessRules {
 		{
 			System.err.println("!!! WARNING !!! Autocommit is not restored to TRUE !!!");
 		}
-		
+
 		
 		product.refresh(); System.out.format("\tNouvel etat du stock = %1$d %2$s\n", product.getQty(), product.getLabel());
 		customer.refresh();	System.out.format("\tLe nouveau solde du compte de %1$s est %2$.2f €\n", customer.getName(), customer.getCredit());

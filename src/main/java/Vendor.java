@@ -3,15 +3,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class Product extends Tables {
+public class Vendor extends Tables {
 	
 	private Long pk_id;
-	private Double price;
-	private Integer qty;
-	private String label;
+	private String name;
+	private Boolean is_busy;
 	
 	
-
 	public Long getPk_id() {
 		return pk_id;
 	}
@@ -20,77 +18,65 @@ public class Product extends Tables {
 		this.pk_id = pk_id;
 	}
 	
-	public Double getPrice() {
-		return price;
+	public String getName() {
+		return name;
 	}
-
-	public boolean setPrice(Double price) {
-		this.price = price;
-		return update();
-	}
-
-	public Integer getQty() {
-		return qty;
-	}
-
-	public boolean setQty(Integer qty) {
-		this.qty = qty;
+	
+	public boolean setName(String name) {
+		this.name = name;
 		return update();
 	}
 	
-	public String getLabel() {
-		return label;
+	public Boolean getIs_busy() {
+		return is_busy;
+		
 	}
-
-	public boolean setLabel(String label) {
-		this.label = label;
+	
+	public boolean setIs_Busy(Boolean is_busy) {
+		this.is_busy = is_busy;
 		return update();
 	}
-
-	
-
-	
 
 	@Override
 	public String toString() {
-		return "Product [pk_id=" + pk_id + ", label=" + label + ", price=" + price + ", qty=" + qty + "]";
+		return "vendor [pk_id=" + pk_id + ", name=" + name + ", is_busy=" + is_busy + "]";
 	}
 
-	private Product() {
-		this.pk_id= -1L;
-		this.price= 0.0;
-		this.qty= 0;
+	
+	
+	private Vendor() {
+		this.pk_id = -1L;
+		this.name = "";
+		this.is_busy = false;
 	}
 	
 	
-	private Product(String label, Double price, Integer qty) {
-		this.label= label;
-		this.price= price;
-		this.qty= qty;
+	private Vendor(String name, Boolean is_busy) {
+		this.name = name;
+		this.is_busy = is_busy;
 	}
 	
-	private Product(Long pk_id, String label, Double price, Integer qty) {
+	private Vendor(Long pk_id,String name, Boolean is_busy) {
 		this.pk_id= pk_id;
-		this.label= label;
-		this.price= price;
-		this.qty= qty;
+		this.name= name;
+		this.is_busy= is_busy;
 	}
 	
-	private Product(Long pk_id) {
+	private Vendor(Long pk_id) {
 		this.pk_id = pk_id;
 		readFromDB();
 	}
 	
 	
-	public static Product findProductById(Long pk_id) {
-		Product product= new Product(pk_id);
-		return  product;
+	public static Vendor findVendorById(Long pk_id) {
+		Vendor vendor= new Vendor(pk_id);
+		return  vendor;
 	}
 	
-	public static Product create(String label,Double price, Integer qty) {
-		Product product= new Product(label, price, qty);
-		product.insert();
-		return  product;
+	public static Vendor create(String name, Boolean is_busy) {
+		Vendor vendor= new Vendor(name, is_busy);
+		vendor.insert();
+		return  vendor;
 	}
 	
 	
@@ -98,18 +84,19 @@ public class Product extends Tables {
 		readFromDB();
 	}
 	
+	
 	public static void truncate() {
-		String sqlCmd = "TRUNCATE product CASCADE;";
+		String sqlCmd = "TRUNCATE vendor CASCADE;";
 		
 		try (PreparedStatement preparedStatement = DbConnection.getDbConn().prepareStatement(sqlCmd)) {
 
 			try {
 				preparedStatement.execute();
-				//System.out.println("Truncate Table product OK");
+				//System.out.println("Truncate Table vendor OK");
 				
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				System.err.println("erreur lors de Truncate Table product");
+				System.err.println("erreur lors de Truncate Table vendor");
 				e.printStackTrace();
 			}
 
@@ -120,16 +107,17 @@ public class Product extends Tables {
 
 	}
 	
+	
+	
 	private boolean insert() {
 		boolean res= false;
-		String sqlCmd = "INSERT INTO product (label, price, qty) VALUES(?, ?, ?);";
+		String sqlCmd = "INSERT INTO vendor (name, is_busy) VALUES(?, ?);";
 		
 		try (PreparedStatement preparedStatement = DbConnection.getDbConn().prepareStatement(sqlCmd, Statement.RETURN_GENERATED_KEYS)) {
 
 			try {
-				preparedStatement.setString(1, this.label);
-				preparedStatement.setDouble(2, this.price);
-				preparedStatement.setInt(3, this.qty);
+				preparedStatement.setString(1, this.name);
+				preparedStatement.setBoolean(2, this.is_busy);
 				//System.out.println("sqlCmd= " + preparedStatement);
 				preparedStatement.execute();
 				long key = -1L;
@@ -139,7 +127,7 @@ public class Product extends Tables {
 				}
 				this.pk_id = key;
 				//System.out.println("Enregistrement en base OK : "  + key + " : " + this);
-				res = true;
+				res= true;
 				
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -157,15 +145,14 @@ public class Product extends Tables {
 	
 	private boolean update() {
 		boolean res= false;
-		String sqlCmd = "update product set label = ?, price = ?, qty = ? where pk_id = ?;";
+		String sqlCmd = "update vendor set name = ?, is_busy = ? where pk_id = ?;";
 
 		try (PreparedStatement preparedStatement = DbConnection.getDbConn().prepareStatement(sqlCmd)) {
 
 			try {
-				preparedStatement.setString(1, this.label);
-				preparedStatement.setDouble(2, this.price);
-				preparedStatement.setInt(3, this.qty);
-				preparedStatement.setLong(4, this.pk_id);
+				preparedStatement.setString(1, this.name);
+				preparedStatement.setBoolean(2, this.is_busy);
+				preparedStatement.setLong(3, this.pk_id);
 				//System.out.println("sqlCmd= " + preparedStatement);
 				preparedStatement.execute();
 				//System.out.println("Mise a jour en base OK de " + this);
@@ -187,7 +174,7 @@ public class Product extends Tables {
 	
 	private void readFromDB() {
 
-		String sqlCmd = "select label, price, qty from product where pk_id = ?;";
+		String sqlCmd = "select name, is_busy from vendor where pk_id = ?;";
 
 		try (PreparedStatement preparedStatement = DbConnection.getDbConn().prepareStatement(sqlCmd)) {
 
@@ -196,9 +183,8 @@ public class Product extends Tables {
 				//System.out.println("sqlCmd= " + preparedStatement);
 				ResultSet rs = preparedStatement.executeQuery();
 				if (rs.next()) {
-					this.label= rs.getString("label");
-					this.price = rs.getDouble("price");
-					this.qty= rs.getInt("qty");
+					this.name = rs.getString("name");
+					this.is_busy = rs.getBoolean("is_busy");
 					//System.out.println("Lecture OK de " + this);
 				}
 				
@@ -215,24 +201,24 @@ public class Product extends Tables {
 	}
 	
 	
-	public static Product findProductByLabel(String label) {
-		Product result= new Product();
-		String sqlCmd = "select pk_id, label, price, qty from product where upper(label) = upper(?);";
+	public static Vendor findVendorByName(String name) {
+		Vendor result= new Vendor();
+		String sqlCmd = "select pk_id, name, is_busy from vendor where upper(name) = upper(?);";
 
 		try (PreparedStatement preparedStatement = DbConnection.getDbConn().prepareStatement(sqlCmd)) {
 
 			try {
-				preparedStatement.setString(1, label);
+				preparedStatement.setString(1, name);
 				//System.out.println("sqlCmd= " + preparedStatement);
 				ResultSet rs = preparedStatement.executeQuery();
 				if (rs.next()) {
-					result= new Product(rs.getLong("pk_id"),  rs.getString("label"), rs.getDouble("price"), rs.getInt("qty"));
+					result= new Vendor(rs.getLong("pk_id"), rs.getString("name"), rs.getBoolean("is_busy"));
 					//System.out.println("Lecture OK de " + result);
 				}
 				
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				System.err.println("Erreur lors de la recherche de " + label);
+				System.err.println("Erreur lors de la recherche de " + name);
 				e.printStackTrace();
 			}
 
@@ -243,5 +229,35 @@ public class Product extends Tables {
 		
 		return  result;
 	}
+	
+	
+	public static Vendor findFreeVendor() {
+		Vendor result= null;
+		String sqlCmd = "select pk_id, name, is_busy from vendor where is_busy = false;";
+
+		try (PreparedStatement preparedStatement = DbConnection.getDbConn().prepareStatement(sqlCmd)) {
+
+			try {
+				//System.out.println("sqlCmd= " + preparedStatement);
+				ResultSet rs = preparedStatement.executeQuery();
+				if (rs.next()) {
+					result= new Vendor(rs.getLong("pk_id"), rs.getString("name"), rs.getBoolean("is_busy"));
+					//System.out.println("Lecture OK de " + result);
+				}
+				
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				System.err.println("Erreur lors de la recherche d\' vendeur ");
+				e.printStackTrace();
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return  result;
+	}
+	
 	
 }

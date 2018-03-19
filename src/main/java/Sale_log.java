@@ -9,6 +9,7 @@ public class Sale_log extends Tables {
 	
 	private Long pk_id;
 	private Long fk_product_id;
+	private Long fk_vendor_id;
 	private Integer qty;
 	
 	
@@ -29,6 +30,13 @@ public class Sale_log extends Tables {
 		update();
 	}
 
+	public Long getFk_vendor_id() {
+		return fk_vendor_id;
+	}
+
+	public void setFk_vendor_id(Long fk_vendor_id) {
+		this.fk_vendor_id = fk_vendor_id;
+	}
 	
 	public Integer getQty() {
 		return qty;
@@ -43,24 +51,28 @@ public class Sale_log extends Tables {
 	@Override
 	public String toString() {
 		Product product= Product.findProductById(fk_product_id);
-		return "Sales_log [pk_id=" + pk_id + ", fk_product_id=" + fk_product_id + "(" + product.getLabel() + "), qty=" + qty + "]";
+		Vendor vendor= Vendor.findVendorById(fk_vendor_id);
+		return "Sales_log [pk_id=" + pk_id + ", fk_product_id=" + fk_product_id + "(" + product.getLabel()  + ", fk_vendor_id=" + fk_vendor_id + "(" + vendor.getName()+ "), qty=" + qty + "]";
 	}
 
 	private Sale_log() {
 		this.pk_id= -1L;
 		this.fk_product_id= -1L;
+		this.fk_vendor_id= -1L;
 		this.qty= 0;
 	}
 	
 	
-	private Sale_log(Long fk_product_id, Integer qty) {
+	private Sale_log(Long fk_product_id, Long fk_vendor_id, Integer qty) {
 		this.fk_product_id= fk_product_id;
+		this.fk_vendor_id= fk_vendor_id;
 		this.qty= qty;
 	}
 	
-	private Sale_log(Long pk_id, Long fk_product_id, Integer qty) {
+	private Sale_log(Long pk_id, Long fk_product_id, Long fk_vendor_id, Integer qty) {
 		this.pk_id= pk_id;
 		this.fk_product_id= fk_product_id;
+		this.fk_vendor_id= fk_vendor_id;
 		this.qty= qty;
 	}
 	
@@ -75,8 +87,8 @@ public class Sale_log extends Tables {
 		return  sales_log;
 	}
 	
-	public static Sale_log create(Long fk_product_id, Integer qty) {
-		Sale_log sales_log= new Sale_log(fk_product_id, qty);
+	public static Sale_log create(Long fk_product_id, Long fk_vendor_id, Integer qty) {
+		Sale_log sales_log= new Sale_log(fk_product_id, fk_vendor_id, qty);
 		sales_log.insert();
 		return  sales_log;
 	}
@@ -87,7 +99,7 @@ public class Sale_log extends Tables {
 	}
 	
 	public static void truncate() {
-		String sqlCmd = "TRUNCATE sales_Log;";
+		String sqlCmd = "TRUNCATE sales_Log CASCADE;";
 		
 		try (PreparedStatement preparedStatement = DbConnection.getDbConn().prepareStatement(sqlCmd)) {
 
@@ -110,13 +122,14 @@ public class Sale_log extends Tables {
 
 	
 	private void insert() {
-		String sqlCmd = "INSERT INTO sales_log (fk_product_id, qty) VALUES(?, ?);";
+		String sqlCmd = "INSERT INTO sales_log (fk_product_id, fk_vendor_id, qty) VALUES(?, ?, ?);";
 		
 		try (PreparedStatement preparedStatement = DbConnection.getDbConn().prepareStatement(sqlCmd, Statement.RETURN_GENERATED_KEYS)) {
 
 			try {
 				preparedStatement.setLong(1, this.fk_product_id);
-				preparedStatement.setInt(2, this.qty);
+				preparedStatement.setLong(2, this.fk_vendor_id);
+				preparedStatement.setInt(3, this.qty);
 				//System.out.println("sqlCmd= " + preparedStatement);
 				preparedStatement.execute();
 				long key = -1L;
@@ -143,14 +156,15 @@ public class Sale_log extends Tables {
 	
 	private void update() {
 
-		String sqlCmd = "update sales_log set fk_product_id = ?, qty = ? where pk_id = ?;";
+		String sqlCmd = "update sales_log set fk_product_id = ?, fk_vendor_id = ?, qty = ? where pk_id = ?;";
 
 		try (PreparedStatement preparedStatement = DbConnection.getDbConn().prepareStatement(sqlCmd)) {
 
 			try {
 				preparedStatement.setLong(1, this.fk_product_id);
-				preparedStatement.setInt(2, this.qty);
-				preparedStatement.setLong(3, this.pk_id);
+				preparedStatement.setLong(2, this.fk_vendor_id);
+				preparedStatement.setInt(3, this.qty);
+				preparedStatement.setLong(4, this.pk_id);
 				//System.out.println("sqlCmd= " + preparedStatement);
 				preparedStatement.execute();
 				//System.out.println("Mise a jour en base OK de " + this);
@@ -170,7 +184,7 @@ public class Sale_log extends Tables {
 	
 	private void readFromDB() {
 
-		String sqlCmd = "select fk_product_id, qty from sales_log where pk_id = ?;";
+		String sqlCmd = "select fk_product_id, fk_vendor_id, qty from sales_log where pk_id = ?;";
 
 		try (PreparedStatement preparedStatement = DbConnection.getDbConn().prepareStatement(sqlCmd)) {
 
@@ -180,6 +194,7 @@ public class Sale_log extends Tables {
 				ResultSet rs = preparedStatement.executeQuery();
 				if (rs.next()) {
 					this.fk_product_id = rs.getLong("fk_product_id");
+					this.fk_vendor_id = rs.getLong("fk_vendor_id");
 					this.qty= rs.getInt("pqty");
 					//System.out.println("Lecture OK de " + this);
 				}
@@ -200,13 +215,13 @@ public class Sale_log extends Tables {
 	private static  ArrayList<Sale_log> readAllFromDB() {
 		ArrayList<Sale_log> resultArrayList= new ArrayList<Sale_log>();
 		
-		String sqlCmd = "select pk_id, fk_product_id, qty from sales_log;";
+		String sqlCmd = "select pk_id, fk_product_id, fk_vendor_id, qty from sales_log;";
 
 		try (PreparedStatement preparedStatement = DbConnection.getDbConn().prepareStatement(sqlCmd)) {
 			try {
 				ResultSet rs = preparedStatement.executeQuery();
 				while (rs.next()) {
-					resultArrayList.add(new Sale_log(rs.getLong("pk_id"), rs.getLong("fk_product_id"), rs.getInt("qty")));
+					resultArrayList.add(new Sale_log(rs.getLong("pk_id"), rs.getLong("fk_product_id"), rs.getLong("fk_vendor_id"), rs.getInt("qty")));
 				}
 			} catch (Exception e ){
 				e.printStackTrace();

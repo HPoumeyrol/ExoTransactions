@@ -55,16 +55,42 @@ public class Cash extends Tables {
 	}
 	
 	
-	public static Cash findCashById(Long pk_id) {
-		Cash cash= new Cash(pk_id);
-		return  cash;
-	}
 	
 	public static Cash create(Double amount) {
 		Cash cash= new Cash(amount);
 		cash.insert();
 		return  cash;
 	}
+	
+	
+	public static Cash getCashFromDb() {
+		Cash resultCash= new Cash();
+		String sqlCmd = "select pk_id, amount from cash;";
+
+		try (PreparedStatement preparedStatement = DbConnection.getDbConn().prepareStatement(sqlCmd)) {
+
+			try {
+				//System.out.println("sqlCmd= " + preparedStatement);
+				ResultSet rs = preparedStatement.executeQuery();
+				if (rs.next()) {
+					resultCash.setPk_id(rs.getLong("pk_id"));
+					resultCash.setAmount(rs.getDouble("amount"));
+					//System.out.println("Lecture OK de " + this);
+				}
+				
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				System.err.println(" erreur lors de recherche de Cash en base !");
+				e.printStackTrace();
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return resultCash;
+	}
+	
 	
 	
 	public void refresh() {
